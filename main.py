@@ -1,8 +1,8 @@
 import pygame
 import sys
 
-ALTO=500
-ANCHO=900
+ALTO=400
+ANCHO=700
 blanco=(255,255,255)
 #Inicializacion de pantalla
 pygame.init()
@@ -13,9 +13,10 @@ pantalla.fill(blanco)
 posinip=[20,20]
 posinif=[0,0]
 pajaro=pygame.image.load('bird.png')
-#fondo=pygame.image.load('fondo.jpg')
+fondo=pygame.image.load('fondo.jpg')
+pantalla.blit(fondo,posinif)
 pantalla.blit(pajaro,posinip)
-#pantalla.blit(fondo,posinif)
+
 #Obtengo x,y del objeto
 marco=pajaro.get_rect()
 
