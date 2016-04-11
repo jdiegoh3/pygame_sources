@@ -1,8 +1,8 @@
 import pygame
 import sys
 
-ALTO=400
-ANCHO=500
+ALTO=500
+ANCHO=900
 blanco=(255,255,255)
 #Inicializacion de pantalla
 pygame.init()
