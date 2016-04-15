@@ -12,6 +12,16 @@ class Enemigo(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(imagen).convert_alpha()
         self.rect = self.image.get_rect()
+        self.direccion=0
+    def update(self):
+        if(self.rect.x >= (ANCHO-self.rect[2])):
+            self.direccion=1
+        if(self.rect.x <= (self.rect[2])):
+            self.direccion=0
+        if (self.direccion == 0):
+            self.rect.x+=5
+        else:
+            self.rect.x-=5
 
 class Bala(pygame.sprite.Sprite):
     def __init__(self,imagen):
@@ -83,6 +93,7 @@ while(not terminar):
     posinip=[mouse_pos[0],mouse_pos[1]]
     tipo = pygame.font.SysFont("monospace", 15)
     blood = tipo.render(("Vida actual: " + str(jugador.vida)),1, blanco)
+    point = tipo.render(("Puntos: " + str(puntos)),1, blanco)
     for event in events:
         if event.type == pygame.KEYDOWN or event.type == pygame.QUIT:
             terminar=True
@@ -105,7 +116,7 @@ while(not terminar):
         for impacto in ls_impactos:
             ls_bala.remove(b)
             ls_todos.remove(b)
-            puntos+=1
+            puntos+=10
             print puntos
 
     ls_choque = pygame.sprite.spritecollide(jugador,ls_enemigos, False)
@@ -115,6 +126,7 @@ while(not terminar):
 
 
     pantalla.blit(blood, (0, 0))
+    pantalla.blit(point, (0,20))
     ls_todos.draw(pantalla)
     ls_enemigos.draw(pantalla)
 
