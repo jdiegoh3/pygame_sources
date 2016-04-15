@@ -12,11 +12,21 @@ class Enemigo(pygame.sprite.Sprite):
         self.image = pygame.image.load(imagen).convert_alpha()
         self.rect = self.image.get_rect()
 
-class Jugador(pygame.sprite.Sprite):
+class Bala(pygame.sprite.Sprite):
     def __init__(self,imagen):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(imagen).convert_alpha()
         self.rect = self.image.get_rect()
+
+class Jugador(pygame.sprite.Sprite):
+
+    def __init__(self,imagen):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(imagen).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.vida = 100
+    def chocar(self):
+        self.vida-=10
 
 blanco=(255,255,255)
 #Inicializacion de pantalla
@@ -32,36 +42,31 @@ posinib=[100,100]
 posinie=[ANCHO-200,100]
 
 ls_todos=pygame.sprite.Group()
+ls_bala=pygame.sprite.Group()
+ls_enemigos=pygame.sprite.Group()
+
 mouse_pos=pygame.mouse.get_pos()
-#pajaro=pygame.image.load('bird.png').convert_alpha()
+
 jugador=Jugador('bird.png')
 jugador.rect.x=mouse_pos[0]
 jugador.rect.y=mouse_pos[1]
 ls_todos.add(jugador)
 
 fondo=pygame.image.load('fondo.jpg').convert()
-bala=pygame.image.load('bala.png').convert_alpha()
 
-#enemigo=pygame.image.load('alienizq.png').convert_alpha()
-ls_enemigos=pygame.sprite.Group()
 for i in range(5):
     enemigo = Enemigo('alienizq.png')
     enemigo.rect.x=random.randrange(ANCHO-enemigo.rect[2])
     enemigo.rect.y=random.randrange(ALTO-enemigo.rect[3])
     ls_enemigos.add(enemigo)
+    ls_todos.add(enemigo)
 
 s_bala=pygame.mixer.Sound('laser.wav')
 pantalla.blit(fondo,posinif)
 ls_todos.draw(pantalla)
-#pantalla.blit(pajaro,posinip)
 ls_enemigos.draw(pantalla)
-#pantalla.blit(enemigo,posinie) Como ya enemigo es una clase se debe blitear asi
 
-
-#pantalla.blit(bala,posinib)
 pygame.mouse.set_visible(False) #Oculta el puntero del mouse
-#Obtengo x,y del objeto
-#marco=pajaro.get_rect()
 
 pygame.display.flip()
 reloj=pygame.time.Clock()
@@ -72,12 +77,17 @@ while(not terminar):
     events = pygame.event.get()
     mouse_pos=pygame.mouse.get_pos()
     posinip=[mouse_pos[0],mouse_pos[1]]
-    #print pygame.mouse.get_pressed()
+
     for event in events:
         if event.type == pygame.KEYDOWN or event.type == pygame.QUIT:
             terminar=True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             #print "pulsado"
+            bala = Bala('bala.png')
+            bala.rect.x=mouse_pos[0]
+            bala.rect.y=mouse_pos[1]+90
+            ls_bala.add(bala)
+            ls_todos.add(bala)
             disparo=True
             posinib[0]=mouse_pos[0]+90
             posinib[1]=mouse_pos[1]+50
@@ -88,15 +98,15 @@ while(not terminar):
     ls_choque = pygame.sprite.spritecollide(jugador,ls_enemigos, False)
     for elemento in ls_choque:
         print 'choque'
+        jugador.chocar()
+        print jugador.vida
 
     ls_todos.draw(pantalla)
-    #pantalla.blit(pajaro,posinip)
     ls_enemigos.draw(pantalla)
-    #pantalla.blit(enemigo,posinie)
     if disparo:
         if(posinib[0] < ANCHO):
             posinib[0]+=5
-            pantalla.blit(bala,posinib)
+            
             s_bala.play()
         else:
             disparo=False
