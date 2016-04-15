@@ -6,6 +6,7 @@ import sys
 ALTO=400
 ANCHO=700
 
+
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self,imagen):
         pygame.sprite.Sprite.__init__(self)
@@ -17,6 +18,10 @@ class Bala(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(imagen).convert_alpha()
         self.rect = self.image.get_rect()
+        self.velocidad=5
+    def update(self):
+        self.rect.x+=self.velocidad
+
 
 class Jugador(pygame.sprite.Sprite):
 
@@ -36,10 +41,8 @@ pygame.display.set_caption("Nave game v0.1 - [JDH]", 'Spine Runtime')
 pantalla.fill(blanco)
 
  #Cargando imagenes
-posinip=[20,20]
 posinif=[0,0]
-posinib=[100,100]
-posinie=[ANCHO-200,100]
+
 
 ls_todos=pygame.sprite.Group()
 ls_bala=pygame.sprite.Group()
@@ -72,45 +75,49 @@ pygame.display.flip()
 reloj=pygame.time.Clock()
 terminar=False
 disparo=False
+puntos=0
 
 while(not terminar):
     events = pygame.event.get()
     mouse_pos=pygame.mouse.get_pos()
     posinip=[mouse_pos[0],mouse_pos[1]]
-
+    tipo = pygame.font.SysFont("monospace", 15)
+    blood = tipo.render(("Vida actual: " + str(jugador.vida)),1, blanco)
     for event in events:
         if event.type == pygame.KEYDOWN or event.type == pygame.QUIT:
             terminar=True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             #print "pulsado"
             bala = Bala('bala.png')
-            bala.rect.x=mouse_pos[0]
-            bala.rect.y=mouse_pos[1]+90
+            bala.rect.x=mouse_pos[0]+90
+            bala.rect.y=mouse_pos[1]+50
             ls_bala.add(bala)
             ls_todos.add(bala)
             disparo=True
-            posinib[0]=mouse_pos[0]+90
-            posinib[1]=mouse_pos[1]+50
+
 
     pantalla.blit(fondo,posinif)
     jugador.rect.x=mouse_pos[0]
     jugador.rect.y=mouse_pos[1]
+
+    for b in ls_bala:
+        ls_impactos=pygame.sprite.spritecollide(b,ls_enemigos, True)
+        for impacto in ls_impactos:
+            ls_bala.remove(b)
+            ls_todos.remove(b)
+            puntos+=1
+            print puntos
+
     ls_choque = pygame.sprite.spritecollide(jugador,ls_enemigos, False)
     for elemento in ls_choque:
         print 'choque'
         jugador.chocar()
-        print jugador.vida
 
+
+    pantalla.blit(blood, (0, 0))
     ls_todos.draw(pantalla)
     ls_enemigos.draw(pantalla)
-    if disparo:
-        if(posinib[0] < ANCHO):
-            posinib[0]+=5
-            
-            s_bala.play()
-        else:
-            disparo=False
 
-
+    ls_todos.update()
     pygame.display.flip()
     reloj.tick(60)
