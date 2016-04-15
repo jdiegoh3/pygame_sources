@@ -4,6 +4,13 @@ import sys
 
 ALTO=400
 ANCHO=700
+
+class Enemigo(pygame.sprite.Sprite):
+    def __init__(self,imagen):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(imagen).convert_alpha()
+        self.rect = self.image.get_rect()
+
 blanco=(255,255,255)
 #Inicializacion de pantalla
 pygame.init()
@@ -21,12 +28,17 @@ pajaro=pygame.image.load('bird.png').convert_alpha()
 fondo=pygame.image.load('fondo.jpg').convert()
 bala=pygame.image.load('bala.png').convert_alpha()
 
-enemigo=pygame.image.load('alienizq.png').convert_alpha()
-
+#enemigo=pygame.image.load('alienizq.png').convert_alpha()
+enemigo = Enemigo('alienizq.png')
+ls_enemigos=pygame.sprite.Group()
+ls_enemigos.add(enemigo)
 s_bala=pygame.mixer.Sound('laser.wav')
 pantalla.blit(fondo,posinif)
 pantalla.blit(pajaro,posinip)
-pantalla.blit(enemigo,posinie)
+ls_enemigos.draw(pantalla)
+#pantalla.blit(enemigo,posinie) Como ya enemigo es una clase se debe blitear asi
+
+
 #pantalla.blit(bala,posinib)
 pygame.mouse.set_visible(False) #Oculta el puntero del mouse
 #Obtengo x,y del objeto
@@ -36,6 +48,7 @@ pygame.display.flip()
 reloj=pygame.time.Clock()
 terminar=False
 disparo=False
+
 while(not terminar):
     events = pygame.event.get()
     mouse_pos=pygame.mouse.get_pos()
@@ -52,7 +65,8 @@ while(not terminar):
 
     pantalla.blit(fondo,posinif)
     pantalla.blit(pajaro,posinip)
-    pantalla.blit(enemigo,posinie)
+    ls_enemigos.draw(pantalla)
+    #pantalla.blit(enemigo,posinie)
     if disparo:
         if(posinib[0] < ANCHO):
             posinib[0]+=5
@@ -63,4 +77,4 @@ while(not terminar):
 
 
     pygame.display.flip()
-    reloj.tick(60)
+    reloj.tick(60)"""
