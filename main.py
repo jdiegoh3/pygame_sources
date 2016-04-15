@@ -85,6 +85,10 @@ while(not terminar):
     pantalla.blit(fondo,posinif)
     jugador.rect.x=mouse_pos[0]
     jugador.rect.y=mouse_pos[1]
+    ls_choque = pygame.sprite.spritecollide(jugador,ls_enemigos, False)
+    for elemento in ls_choque:
+        print 'choque'
+
     ls_todos.draw(pantalla)
     #pantalla.blit(pajaro,posinip)
     ls_enemigos.draw(pantalla)
