@@ -1,4 +1,5 @@
 import pygame
+import random
 import sys
 
 
@@ -6,6 +7,12 @@ ALTO=400
 ANCHO=700
 
 class Enemigo(pygame.sprite.Sprite):
+    def __init__(self,imagen):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(imagen).convert_alpha()
+        self.rect = self.image.get_rect()
+
+class Usuario(pygame.sprite.Sprite):
     def __init__(self,imagen):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(imagen).convert_alpha()
@@ -29,9 +36,14 @@ fondo=pygame.image.load('fondo.jpg').convert()
 bala=pygame.image.load('bala.png').convert_alpha()
 
 #enemigo=pygame.image.load('alienizq.png').convert_alpha()
-enemigo = Enemigo('alienizq.png')
 ls_enemigos=pygame.sprite.Group()
-ls_enemigos.add(enemigo)
+for i in range(5):
+    enemigo = Enemigo('alienizq.png')
+    print enemigo.rect
+    enemigo.rect.x=random.randrange(ANCHO-enemigo.rect[2])
+    enemigo.rect.y=random.randrange(ALTO-enemigo.rect[3])
+    ls_enemigos.add(enemigo)
+
 s_bala=pygame.mixer.Sound('laser.wav')
 pantalla.blit(fondo,posinif)
 pantalla.blit(pajaro,posinip)
@@ -77,4 +89,4 @@ while(not terminar):
 
 
     pygame.display.flip()
-    reloj.tick(60)"""
+    reloj.tick(60)
