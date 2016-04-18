@@ -48,6 +48,7 @@ class Jugador(pygame.sprite.Sprite):
         self.image = pygame.image.load(imagen).convert_alpha()
         self.rect = self.image.get_rect()
         self.vida = 100
+        self.score=0
     def chocar(self):
         self.vida-=10
 
@@ -96,7 +97,7 @@ pygame.display.flip()
 reloj=pygame.time.Clock()
 terminar=False
 disparo=False
-puntos=0
+#puntos=0
 
 while(not terminar):
     events = pygame.event.get()
@@ -104,7 +105,8 @@ while(not terminar):
     posinip=[mouse_pos[0],mouse_pos[1]]
     tipo = pygame.font.SysFont("monospace", 15)
     blood = tipo.render(("Vida actual: " + str(jugador.vida)),1, blanco)
-    point = tipo.render(("Puntos: " + str(puntos)),1, blanco)
+    point = tipo.render(("Puntos: " + str(jugador.score)),1, blanco)
+    pygame.transform.rotate(jugador.image, 30)
     for event in events:
         if event.type == pygame.KEYDOWN or event.type == pygame.QUIT:
             terminar=True
@@ -127,8 +129,8 @@ while(not terminar):
         for impacto in ls_impactos:
             ls_bala.remove(b)
             ls_todos.remove(b)
-            puntos+=10
-            
+            jugador.score+=10
+
 
     ls_choque = pygame.sprite.spritecollide(jugador,ls_enemigos, False)
     for elemento in ls_choque:
