@@ -13,6 +13,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.image = pygame.image.load(imagen).convert_alpha()
         self.rect = self.image.get_rect()
         self.direccion=0
+        self.disparar=random.randrange(100)
     def update(self):
         if(self.rect.x >= (ANCHO-self.rect[2])):
             self.direccion=1
@@ -22,6 +23,9 @@ class Enemigo(pygame.sprite.Sprite):
             self.rect.x+=5
         else:
             self.rect.x-=5
+        self.disparar-=1
+        if(self.disparar < 0):
+            self.disparar=random.randrange(100)
 
 class Bala(pygame.sprite.Sprite):
     def __init__(self,imagen):
@@ -29,8 +33,12 @@ class Bala(pygame.sprite.Sprite):
         self.image = pygame.image.load(imagen).convert_alpha()
         self.rect = self.image.get_rect()
         self.velocidad=5
+        self.jugador=1
     def update(self):
-        self.rect.x+=self.velocidad
+        if(self.jugador==1):
+            self.rect.x+=self.velocidad
+        else:
+            self.rect.x-=self.velocidad
 
 
 class Jugador(pygame.sprite.Sprite):
@@ -57,6 +65,8 @@ posinif=[0,0]
 ls_todos=pygame.sprite.Group()
 ls_bala=pygame.sprite.Group()
 ls_enemigos=pygame.sprite.Group()
+ls_balase=pygame.sprite.Group()
+ls_jugadores=pygame.sprite.Group()
 
 mouse_pos=pygame.mouse.get_pos()
 
@@ -64,6 +74,7 @@ jugador=Jugador('bird.png')
 jugador.rect.x=mouse_pos[0]
 jugador.rect.y=mouse_pos[1]
 ls_todos.add(jugador)
+ls_jugadores.add(jugador)
 
 fondo=pygame.image.load('fondo.jpg').convert()
 
@@ -117,18 +128,33 @@ while(not terminar):
             ls_bala.remove(b)
             ls_todos.remove(b)
             puntos+=10
-            print puntos
+            
 
     ls_choque = pygame.sprite.spritecollide(jugador,ls_enemigos, False)
     for elemento in ls_choque:
         print 'choque'
         jugador.chocar()
 
+    for be in ls_balase:
+        impactos=pygame.sprite.spritecollide(be,ls_jugadores, False)
+        for imp in impactos:
+            jugador.chocar()
+            ls_balase.remove(be)
+            ls_todos.remove(be)
 
     pantalla.blit(blood, (0, 0))
     pantalla.blit(point, (0,20))
     ls_todos.draw(pantalla)
     ls_enemigos.draw(pantalla)
+
+    for e in ls_enemigos:
+        if(e.disparar == 0):
+            balae=Bala('balae.png')
+            balae.jugador=0
+            balae.rect.x=e.rect.x
+            balae.rect.y=e.rect.y
+            ls_todos.add(balae)
+            ls_balase.add(balae)
 
     ls_todos.update()
     pygame.display.flip()
